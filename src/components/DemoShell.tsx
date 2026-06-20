@@ -75,6 +75,7 @@ export default function DemoShell({ onBack, initialScreen }: Props) {
           ))}
         </div>
 
+        <div className="phone-wrapper">
         <div className="phone">
           <div className="phone-notch" />
           <div className="status-bar">
@@ -110,6 +111,7 @@ export default function DemoShell({ onBack, initialScreen }: Props) {
               ))}
             </nav>
           )}
+        </div>
         </div>
       </div>
 

@@ -89,11 +89,13 @@ export default function Journal() {
                 <button key={m} className={`wm-mood${mood === m ? ' selected' : ''}`} onClick={() => setMood(m)}>{m}</button>
               ))}
             </div>
+            <div className="wm-char-count">{text.length} / 200</div>
             <textarea
               className="wm-textarea"
               value={text}
               onChange={e => setText(e.target.value)}
               placeholder="Write anything — this is just for you…"
+              maxLength={200}
             />
             <div className="wm-actions">
               <button className="wm-btn wm-cancel" onClick={() => { setModalOpen(false); setText(''); }}>Cancel</button>

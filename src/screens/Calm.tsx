@@ -30,57 +30,66 @@ const BODY = [
 export default function Calm() {
   const { setScreen, showToast } = useApp();
   const [tab, setTab] = useState<Tab>('breathe');
-  const [phaseIdx, setPhaseIdx] = useState(0);
-  const [sec, setSec] = useState(0);
-  const [round, setRound] = useState(0);
   const [running, setRunning] = useState(false);
   const [label, setLabel] = useState('Tap to Begin');
   const [sublabel, setSublabel] = useState('4 counts in · hold · 4 out · hold');
   const [counter, setCounter] = useState<string>('4');
   const [orbPhase, setOrbPhase] = useState<'inhale' | 'exhale' | ''>('');
+
+  // Single ref holds all mutable breath state — no stale closures in interval
+  const breathRef = useRef({ phaseIdx: 0, sec: 0, round: 0 });
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!running) return;
     intervalRef.current = setInterval(() => {
-      setSec(s => {
-        const phase = PHASES[phaseIdx];
-        const remaining = phase.duration - s;
-        setCounter(String(remaining));
-        if (s === 0) {
-          setLabel(phase.label);
-          setSublabel(phase.sub);
-          if (phase.phase === 'inhale') setOrbPhase('inhale');
-          else if (phase.phase === 'exhale') setOrbPhase('exhale');
-        }
-        if (s + 1 >= phase.duration) {
-          const nextIdx = (phaseIdx + 1) % PHASES.length;
-          if (nextIdx === 0) {
-            const nextRound = round + 1;
-            if (nextRound >= 4) {
-              clearInterval(intervalRef.current!);
-              setRunning(false);
-              setLabel('Complete ✓');
-              setSublabel('Great session! 4 rounds done.');
-              setCounter('✓');
-              setOrbPhase('');
-              showToast('🌬️ Breathing complete · +25 pts');
-              return 0;
-            }
-            setRound(nextRound);
+      const state = breathRef.current;
+      const phase = PHASES[state.phaseIdx];
+
+      if (state.sec === 0) {
+        setLabel(phase.label);
+        setSublabel(phase.sub);
+        if (phase.phase === 'inhale') setOrbPhase('inhale');
+        else if (phase.phase === 'exhale') setOrbPhase('exhale');
+      }
+
+      const remaining = phase.duration - state.sec;
+      setCounter(String(Math.max(1, remaining)));
+
+      if (state.sec + 1 >= phase.duration) {
+        const nextIdx = (state.phaseIdx + 1) % PHASES.length;
+        if (nextIdx === 0) {
+          const nextRound = state.round + 1;
+          if (nextRound >= 4) {
+            clearInterval(intervalRef.current!);
+            setRunning(false);
+            setLabel('Complete ✓');
+            setSublabel('Great session! 4 rounds done.');
+            setCounter('✓');
+            setOrbPhase('');
+            showToast('🌬️ Breathing complete · +25 pts');
+            breathRef.current = { phaseIdx: 0, sec: 0, round: 0 };
+            return;
           }
-          setPhaseIdx(nextIdx);
-          return 0;
+          breathRef.current.round = nextRound;
         }
-        return s + 1;
-      });
+        breathRef.current.phaseIdx = nextIdx;
+        breathRef.current.sec = 0;
+      } else {
+        breathRef.current.sec += 1;
+      }
     }, 1000);
     return () => clearInterval(intervalRef.current!);
-  }, [running, phaseIdx, round, showToast]);
+  }, [running, showToast]);
 
   function start() {
     if (running) return;
-    setRunning(true); setPhaseIdx(0); setSec(0); setRound(0); setCounter('4');
+    breathRef.current = { phaseIdx: 0, sec: 0, round: 0 };
+    setLabel('INHALE');
+    setSublabel(PHASES[0].sub);
+    setCounter('4');
+    setOrbPhase('');
+    setRunning(true);
   }
 
   return (
@@ -101,8 +110,11 @@ export default function Calm() {
       {tab === 'breathe' && (
         <div className="calm-content">
           <div style={{ fontSize: '0.82rem', color: 'var(--muted)', maxWidth: 240 }}>Box breathing calms your nervous system in under 2 minutes.</div>
-          <div className={`breath-orb${orbPhase ? ' ' + orbPhase : ''}`} onClick={start}>
-            <div className="breath-inner">🌬️</div>
+          <div className="breath-orb-wrap" onClick={start}>
+            <div className={`breath-orb-ring${orbPhase === 'inhale' ? ' expand' : ''}`} />
+            <div className={`breath-orb${orbPhase ? ' ' + orbPhase : ''}`}>
+              <div className="breath-inner">🌬️</div>
+            </div>
           </div>
           <div className="breath-counter">{counter}</div>
           <div className="breath-label">{label}</div>
