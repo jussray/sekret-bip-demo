@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "repository": "jussray/sekret-bip-demo",
+  "portfolioHub": "jussray/founder-control-room",
+  "role": "demo-non-authoritative",
+  "authority": {
+    "sourceOfTruth": "Demonstration UI only; canonical product truth remains jussray/Sekret-Bip",
+    "portfolioMode": "sanitized-read-only-observer",
+    "productionMutation": "not-allowed"
+  },
+  "controlRoom": {
+    "localSurface": false,
+    "surfaces": [
+      ".github/workflows"
+    ],
+    "privateContentAllowed": false
+  },
+  "evidence": {
+    "status": "demo",
+    "commit": "843d307d21567571792985a97ca5d0022940a2f7",
+    "observedAt": "2026-07-12",
+    "proofRefs": [
+      ".github/workflows"
+    ]
+  },
+  "risk": {
+    "level": "low",
+    "blockers": [
+      "This repository must never be interpreted as production product, backend, privacy, or release evidence"
+    ]
+  },
+  "nextGate": "Keep the demo visually useful while preserving an explicit non-authoritative boundary from the canonical Se’kret Bip repository."
+}
