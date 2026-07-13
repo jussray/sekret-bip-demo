@@ -8,8 +8,9 @@ Se'kret Bip — interactive web demonstration of the teen emotional-growth app. 
 
 ## Strategy boundary
 
-- [`docs/strategy/MOBILE_SIGNALS_DEMO_BOUNDARY_2026.md`](docs/strategy/MOBILE_SIGNALS_DEMO_BOUNDARY_2026.md) — safe ways this demo may represent emerging mobile-development concepts without claiming production implementation
-- Canonical production strategy and evidence live in `jussray/Sekret-Bip`.
+- [`docs/industry-signals/mobile-dev-under-the-radar-2026.md`](docs/industry-signals/mobile-dev-under-the-radar-2026.md) — canonical ten-trend mobile-development research brief
+- [`docs/strategy/MOBILE_SIGNALS_DEMO_BOUNDARY_2026.md`](docs/strategy/MOBILE_SIGNALS_DEMO_BOUNDARY_2026.md) — safe ways this public demo may represent those concepts without claiming production implementation
+- Canonical production architecture and evidence live in `jussray/Sekret-Bip`.
 
 ## License
 
